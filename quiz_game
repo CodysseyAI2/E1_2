@@ -1,0 +1,35 @@
+from quiz import Quiz
+
+class QuizGame:
+    def __init__(self):
+        self.quizzes: list[Quiz] = []
+        self.best_score: int = 0
+
+    def get_default_quizzes(self) -> list[Quiz]:
+        return [
+            Quiz(
+                question="Python에서 가변(Mutable) 객체는 무엇일까요?",
+                choices=["tuple", "int", "list", "str"],
+                answer=3,
+            ),
+            Quiz(
+                question="리스트의 가장 끝에 요소를 추가하는 메서드는?",
+                choices=["add()", "append()", "push()", "insert()"],
+                answer=2,
+            ),
+            Quiz(
+                question="다음 중 Python의 기본 데이터 타입이 아닌 것은?",
+                choices=["dict", "set", "array", "bool"],
+                answer=3,
+            ),
+            Quiz(
+                question="조건문에서 조건이 거짓일 때 실행할 블록을 지정하는 키워드는?",
+                choices=["else", "catch", "finally", "then"],
+                answer=1,
+            ),
+            Quiz(
+                question="키-값(Key-Value) 쌍으로 데이터를 저장하는 자료형은?",
+                choices=["list", "tuple", "dict", "set"],
+                answer=3,
+            ),
+        ]
