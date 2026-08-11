@@ -75,3 +75,15 @@ class QuizGame:
             print("💾 데이터가 안전하게 저장되었습니다.")
         except Exception as e:
             print(f"⚠️ 데이터 저장 실패: {e}")
+
+    @staticmethod
+    def get_valid_input_int(prompt: str, min_val: int, max_val: int) -> int:
+        while True:
+            try:
+                user_input = input(prompt).strip()
+                val = int(user_input)
+                if min_val <= val <= max_val:
+                    return val
+                print(f"❌ {min_val}부터 {max_val} 사이의 숫자를 입력해 주세요.")
+            except ValueError:
+                print("❌ 숫자로 올바르게 입력해 주세요.")
