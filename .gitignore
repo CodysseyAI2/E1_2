@@ -1,0 +1,22 @@
+# Python Bytecode & Cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Virtual Environment
+venv/
+.venv/
+env/
+
+# IDE / Editor Settings
+.vscode/
+.idea/
+*.swp
+
+# Data File
+state.json
+
+# OS Generated Files
+.DS_Store
+Thumbs.db
