@@ -94,6 +94,38 @@ class QuizGame:
             except ValueError:
                 print("❌ 숫자로 올바르게 입력해 주세요.")
 
+    def play_quiz(self):
+        if not self.quizzes:
+            print("\n❌ 풀어볼 퀴즈가 없습니다. 먼저 퀴즈를 추가해 주세요.")
+            return
+
+        print("\n🚀 퀴즈 풀기를 시작합니다!")
+        score = 0
+        total = len(self.quizzes)
+
+        for idx, quiz in enumerate(self.quizzes, start=1):
+            print(f"\n[문제 {idx}/{total}] {quiz.question}")
+            for c_idx, choice in enumerate(quiz.choices, start=1):
+                print(f"  {c_idx}. {choice}")
+
+            user_ans = self.get_valid_input_int("정답 번호 선택 (1-4): ", 1, 4)
+
+            if quiz.is_correct(user_ans):
+                print("⭕ 정답입니다!")
+                score += 1
+            else:
+                correct_choice = quiz.choices[quiz.answer - 1]
+                print(f"❌ 틀렸습니다. 정답은 {quiz.answer}번({correct_choice})입니다.")
+
+        print("\n" + "=" * 35)
+        print(f"🎉 퀴즈 종료! 최종 점수: {score} / {total}")
+
+        if score > self.best_score:
+            print(f"🎊 축하합니다! 최고 점수를 갱신했습니다! ({self.best_score}점 ➔ {score}점)")
+            self.best_score = score
+            self.save_state()
+        print("=" * 35)
+
     def display_menu(self):
         print("\n" + "=" * 35)
         print("          🧠 파이썬 퀴즈 게임          ")
@@ -112,7 +144,7 @@ class QuizGame:
                 choice = self.get_valid_input_int("선택 (1-5): ", 1, 5)
 
                 if choice == 1:
-                    print("\n🚧 [퀴즈 풀기] 기능 구현 예정입니다.")
+                    self.play_quiz()
                 elif choice == 2:
                     print("\n🚧 [퀴즈 추가] 기능 구현 예정입니다.")
                 elif choice == 3:
