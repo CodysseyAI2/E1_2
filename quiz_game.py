@@ -126,6 +126,31 @@ class QuizGame:
             self.save_state()
         print("=" * 35)
 
+    def add_quiz(self):
+        print("\n➕ 새 퀴즈 추가")
+        
+        while True:
+            question = input("문제 내용을 입력하세요: ").strip()
+            if question:
+                break
+            print("❌ 문제 내용은 공백일 수 없습니다.")
+
+        choices = []
+        for i in range(1, 5):
+            while True:
+                choice = input(f"선택지 {i}번을 입력하세요: ").strip()
+                if choice:
+                    choices.append(choice)
+                    break
+                print("❌ 선택지는 공백일 수 없습니다.")
+
+        answer = self.get_valid_input_int("정답 번호를 입력하세요 (1-4): ", 1, 4)
+
+        new_quiz = Quiz(question=question, choices=choices, answer=answer)
+        self.quizzes.append(new_quiz)
+        self.save_state()
+        print("✅ 새 퀴즈가 성공적으로 추가되었습니다!")
+
     def display_menu(self):
         print("\n" + "=" * 35)
         print("          🧠 파이썬 퀴즈 게임          ")
@@ -146,7 +171,7 @@ class QuizGame:
                 if choice == 1:
                     self.play_quiz()
                 elif choice == 2:
-                    print("\n🚧 [퀴즈 추가] 기능 구현 예정입니다.")
+                    self.add_quiz()
                 elif choice == 3:
                     print("\n🚧 [퀴즈 목록 보기] 기능 구현 예정입니다.")
                 elif choice == 4:
