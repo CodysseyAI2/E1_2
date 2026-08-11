@@ -1,3 +1,7 @@
+import json
+import os
+import sys
+
 class Quiz:
     def __init__(self, question: str, choices: list[str], answer: int):
         self.question = question
