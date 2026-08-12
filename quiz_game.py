@@ -90,9 +90,9 @@ class QuizGame:
                 val = int(user_input)
                 if min_val <= val <= max_val:
                     return val
-                print(f"❌ {min_val}부터 {max_val} 사이의 숫자를 입력해 주세요.")
+                print(f"⚠️ 잘못된 입력입니다. {min_val}-{max_val} 사이의 숫자를 입력하세요.")
             except ValueError:
-                print("❌ 숫자로 올바르게 입력해 주세요.")
+                print(f"⚠️ 잘못된 입력입니다. {min_val}-{max_val} 사이의 숫자를 입력하세요.")
 
     def play_quiz(self):
         if not self.quizzes:
