@@ -169,10 +169,11 @@ class QuizGame:
         print("-" * 40)
 
     def show_best_score(self):
-        """현재 최고 점수 조회"""
         total = len(self.quizzes)
+        percentage = int((self.best_score / total) * 100) if total > 0 else 0
+
         print("\n" + "=" * 42)
-        print(f"🏆 현재 최고 점수: {self.best_score}점 / (총 {total}문제)")
+        print(f"🏆 최고 점수: {percentage}점 ({total}문제 중 {self.best_score}문제 정답)")
         if self.best_score == 0:
             print("💡 아직 기록된 최고 점수가 없습니다. 퀴즈에 도전해 보세요!")
         elif self.best_score == total and total > 0:
