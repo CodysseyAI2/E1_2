@@ -1,5 +1,6 @@
 import json
 import os
+import random
 import sys
 from datetime import datetime
 from quiz import Quiz
@@ -125,12 +126,23 @@ class QuizGame:
             print("\n❌ 풀어볼 퀴즈가 없습니다. 먼저 퀴즈를 추가해 주세요.")
             return
 
+        total_available = len(self.quizzes)
+        print(f"\n💡 현재 총 {total_available}개의 퀴즈가 등록되어 있습니다.")
+
+        quiz_count = self.get_valid_input_int(
+            f"풀이할 문제 수를 입력하세요 (1-{total_available}): ", 1, total_available
+        )
+
+        selected_quizzes = self.quizzes.copy()
+        random.shuffle(selected_quizzes)
+        selected_quizzes = selected_quizzes[:quiz_count]
+
         score = 0
-        total = len(self.quizzes)
+        total = len(selected_quizzes)
 
         print(f"\n 📝 퀴즈를 시작합니다! (총 {total}문제)")
 
-        for idx, quiz in enumerate(self.quizzes, start=1):
+        for idx, quiz in enumerate(selected_quizzes, start=1):
             print("\n" + "-" * 40)
             print(f"\n[문제 {idx}/{total}] {quiz.question}")
             for c_idx, choice in enumerate(quiz.choices, start=1):
