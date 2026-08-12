@@ -134,7 +134,7 @@ class QuizGame:
         print("\n📌 새로운 퀴즈를 추가합니다.")
         
         while True:
-            question = input("\n문제를 입력하세요: ").strip()
+            question = input("문제를 입력하세요: ").strip()
             if question:
                 break
             print("❌ 문제 내용은 공백일 수 없습니다.")
@@ -161,13 +161,12 @@ class QuizGame:
             return
 
         print(f"\n📋 등록된 퀴즈 목록 (총 {len(self.quizzes)}개)")
-        print("-" * 35)
+        print("-" * 40)
+        
         for idx, quiz in enumerate(self.quizzes, start=1):
-            print(f"Q{idx}. {quiz.question}")
-            for c_idx, choice in enumerate(quiz.choices, start=1):
-                mark = " (정답)" if c_idx == quiz.answer else ""
-                print(f"   {c_idx}) {choice}{mark}")
-            print("-" * 35)
+            print(f"[{idx}] {quiz.question}")
+        
+        print("-" * 40)
 
     def show_best_score(self):
         """현재 최고 점수 조회"""
