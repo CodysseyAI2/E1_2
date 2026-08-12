@@ -117,14 +117,14 @@ class QuizGame:
                 correct_choice = quiz.choices[quiz.answer - 1]
                 print(f"❌ 틀렸습니다. 정답은 {quiz.answer}번({correct_choice})입니다.")
 
-        print("\n" + "=" * 35)
+        print("\n" + "=" * 42)
         print(f"🎉 퀴즈 종료! 최종 점수: {score} / {total}")
 
         if score > self.best_score:
             print(f"🎊 축하합니다! 최고 점수를 갱신했습니다! ({self.best_score}점 ➔ {score}점)")
             self.best_score = score
             self.save_state()
-        print("=" * 35)
+        print("=" * 42)
 
     def add_quiz(self):
         print("\n➕ 새 퀴즈 추가")
@@ -168,30 +168,30 @@ class QuizGame:
     def show_best_score(self):
         """현재 최고 점수 조회"""
         total = len(self.quizzes)
-        print("\n" + "=" * 35)
+        print("\n" + "=" * 42)
         print(f"🏆 현재 최고 점수: {self.best_score}점 / (총 {total}문제)")
         if self.best_score == 0:
             print("💡 아직 기록된 최고 점수가 없습니다. 퀴즈에 도전해 보세요!")
         elif self.best_score == total and total > 0:
             print("🥇 만점 기록 보유 중! 대단합니다!")
-        print("=" * 35)
-
+        print("=" * 42)
+    
     def display_menu(self):
-        print("\n" + "=" * 35)
-        print("          🧠 파이썬 퀴즈 게임          ")
-        print("=" * 35)
+        print("\n" + "=" * 42)
+        print("        🎯 나만의 퀴즈 게임 🎯")
+        print("=" * 42)
         print(" 1. 퀴즈 풀기")
         print(" 2. 퀴즈 추가")
-        print(" 3. 퀴즈 목록 보기")
-        print(" 4. 최고 점수 확인")
-        print(" 5. 종료하기")
-        print("=" * 35)
+        print(" 3. 퀴즈 목록")
+        print(" 4. 점수 확인")
+        print(" 5. 종료")
+        print("=" * 42)
 
     def run(self):
         while True:
             try:
                 self.display_menu()
-                choice = self.get_valid_input_int("선택 (1-5): ", 1, 5)
+                choice = self.get_valid_input_int("선택: ", 1, 5)
 
                 if choice == 1:
                     self.play_quiz()
