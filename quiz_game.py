@@ -103,9 +103,9 @@ class QuizGame:
         total = len(self.quizzes)
 
         print(f"\n 📝 퀴즈를 시작합니다! (총 {total}문제)")
-        print("\n" + "-" * 40)
 
         for idx, quiz in enumerate(self.quizzes, start=1):
+            print("\n" + "-" * 40)
             print(f"\n[문제 {idx}/{total}] {quiz.question}")
             for c_idx, choice in enumerate(quiz.choices, start=1):
                 print(f"  {c_idx}. {choice}")
