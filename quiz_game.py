@@ -45,6 +45,10 @@ class QuizGame:
         self.best_score = 0
 
     def load_state(self):
+        print("\n" + "=" * 42)
+        print("        🎯 나만의 퀴즈 게임 🎯")
+        print("=" * 42)
+
         if not os.path.exists(self.FILE_PATH):
             print("ℹ️ 데이터 파일이 없습니다. 기본 퀴즈 데이터로 초기화합니다.")
             self.reset_to_default()
@@ -59,7 +63,11 @@ class QuizGame:
             if not self.quizzes:
                 raise ValueError("퀴즈 데이터가 비어 있습니다.")
 
-            print(f"📂 저장된 데이터를 불러왔습니다. (퀴즈 {len(self.quizzes)}개, 최고점수 {self.best_score}점)")
+            total = len(self.quizzes)
+            percentage = int((self.best_score / total) * 100) if total > 0 else 0
+
+            print(f"📂 저장된 데이터를 불러왔습니다. (퀴즈 {total}개, 최고점수 {percentage}점)")
+            print("=" * 42)
 
         except (json.JSONDecodeError, ValueError, KeyError) as e:
             print(f"⚠️ 데이터 파일이 손상되었거나 형식이 올바르지 않습니다. ({e})")
@@ -181,9 +189,6 @@ class QuizGame:
         print("=" * 42)
     
     def display_menu(self):
-        print("\n" + "=" * 42)
-        print("        🎯 나만의 퀴즈 게임 🎯")
-        print("=" * 42)
         print(" 1. 퀴즈 풀기")
         print(" 2. 퀴즈 추가")
         print(" 3. 퀴즈 목록")
