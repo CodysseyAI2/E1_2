@@ -173,6 +173,28 @@ class QuizGame:
             print("✅ 퀴즈가 추가되었습니다!")
         except (KeyboardInterrupt, EOFError):
             self.safe_exit(message="퀴즈 추가 중 작업이 취소되었습니다.")
+    
+    def delete_quiz(self):
+        if not self.quizzes:
+            print("\n❌ 삭제할 퀴즈가 없습니다.")
+            return
+
+        print(f"\n🗑️ 퀴즈 삭제 (총 {len(self.quizzes)}개)")
+        print("-" * 40)
+        for idx, quiz in enumerate(self.quizzes, start=1):
+            print(f"[{idx}] {quiz.question}")
+        print("-" * 40)
+
+        print("💡 삭제를 취소하려면 0을 입력하세요.")
+        target_idx = self.get_valid_input_int("삭제할 퀴즈 번호 선택: ", 0, len(self.quizzes))
+
+        if target_idx == 0:
+            print("🛑 퀴즈 삭제가 취소되었습니다.")
+            return
+
+        deleted_quiz = self.quizzes.pop(target_idx - 1)
+        self.save_state()
+        print(f"✅ Q. '{deleted_quiz.question}' 퀴즈가 삭제되었습니다.")
 
     def show_quiz_list(self):
         if not self.quizzes:
@@ -202,26 +224,29 @@ class QuizGame:
     def display_menu(self):
         print(" 1. 퀴즈 풀기")
         print(" 2. 퀴즈 추가")
-        print(" 3. 퀴즈 목록")
-        print(" 4. 점수 확인")
-        print(" 5. 종료")
+        print(" 3. 퀴즈 삭제") 
+        print(" 4. 퀴즈 목록")
+        print(" 5. 점수 확인")
+        print(" 6. 종료")
         print("=" * 42)
 
     def run(self):
         while True:
             try:
                 self.display_menu()
-                choice = self.get_valid_input_int("선택: ", 1, 5)
+                choice = self.get_valid_input_int("선택: ", 1, 6)
 
                 if choice == 1:
                     self.play_quiz()
                 elif choice == 2:
                     self.add_quiz()
                 elif choice == 3:
-                    self.show_quiz_list()
+                    self.delete_quiz()
                 elif choice == 4:
-                    self.show_best_score()
+                    self.show_quiz_list()
                 elif choice == 5:
+                    self.show_best_score()
+                elif choice == 6:
                     self.save_state()
                     print("👋 게임을 종료합니다. 이용해 주셔서 감사합니다!")
                     break
