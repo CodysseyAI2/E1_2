@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 from quiz import Quiz
 
 class QuizGame:
@@ -90,8 +91,13 @@ class QuizGame:
         except Exception as e:
             print(f"⚠️ 데이터 저장 실패: {e}")
 
-    @staticmethod
-    def get_valid_input_int(prompt: str, min_val: int, max_val: int) -> int:
+    def safe_exit(self, message: str = "사용자에 의해 프로그램이 중단되었습니다."):
+        print(f"\n\n⚠️ {message}")
+        self.save_state()
+        print("👋 데이터를 안전하게 보존하고 프로그램을 종료합니다.")
+        sys.exit(0)
+
+    def get_valid_input_int(self, prompt: str, min_val: int, max_val: int) -> int:
         while True:
             try:
                 user_input = input(prompt).strip()
@@ -101,6 +107,8 @@ class QuizGame:
                 print(f"⚠️ 잘못된 입력입니다. {min_val}-{max_val} 사이의 숫자를 입력하세요.")
             except ValueError:
                 print(f"⚠️ 잘못된 입력입니다. {min_val}-{max_val} 사이의 숫자를 입력하세요.")
+            except (KeyboardInterrupt, EOFError):
+                self.safe_exit()
 
     def play_quiz(self):
         if not self.quizzes:
@@ -141,27 +149,30 @@ class QuizGame:
     def add_quiz(self):
         print("\n📌 새로운 퀴즈를 추가합니다.")
         
-        while True:
-            question = input("문제를 입력하세요: ").strip()
-            if question:
-                break
-            print("❌ 문제 내용은 공백일 수 없습니다.")
-
-        choices = []
-        for i in range(1, 5):
+        try:
             while True:
-                choice = input(f"선택지 {i}: ").strip()
-                if choice:
-                    choices.append(choice)
+                question = input("문제를 입력하세요: ").strip()
+                if question:
                     break
-                print("❌ 선택지는 공백일 수 없습니다.")
+                print("❌ 문제 내용은 공백일 수 없습니다.")
 
-        answer = self.get_valid_input_int("정답 번호 (1-4): ", 1, 4)
+            choices = []
+            for i in range(1, 5):
+                while True:
+                    choice = input(f"선택지 {i}: ").strip()
+                    if choice:
+                        choices.append(choice)
+                        break
+                    print("❌ 선택지는 공백일 수 없습니다.")
 
-        new_quiz = Quiz(question=question, choices=choices, answer=answer)
-        self.quizzes.append(new_quiz)
-        self.save_state()
-        print("✅ 퀴즈가 추가되었습니다!")
+            answer = self.get_valid_input_int("정답 번호 (1-4): ", 1, 4)
+
+            new_quiz = Quiz(question=question, choices=choices, answer=answer)
+            self.quizzes.append(new_quiz)
+            self.save_state()
+            print("✅ 퀴즈가 추가되었습니다!")
+        except (KeyboardInterrupt, EOFError):
+            self.safe_exit(message="퀴즈 추가 중 작업이 취소되었습니다.")
 
     def show_quiz_list(self):
         if not self.quizzes:
@@ -216,7 +227,4 @@ class QuizGame:
                     break
 
             except (KeyboardInterrupt, EOFError):
-                print("\n\n⚠️ 사용자에 의해 프로그램이 중단되었습니다.")
-                self.save_state()
-                print("👋 데이터를 안전하게 저장하고 종료합니다.")
-                break
+                self.safe_exit()
