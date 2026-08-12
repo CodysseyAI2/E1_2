@@ -124,8 +124,6 @@ class QuizGame:
         print("\n" + "=" * 42)
         print(f"🏆 결과: {total}문제 중 {score}문제 정답! ({percentage}점)")
 
-        
-
         if score > self.best_score:
             print("🎉 새로운 최고 점수입니다!")
             self.best_score = score
@@ -133,10 +131,10 @@ class QuizGame:
         print("=" * 42)
 
     def add_quiz(self):
-        print("\n➕ 새 퀴즈 추가")
+        print("\n📌 새로운 퀴즈를 추가합니다.")
         
         while True:
-            question = input("문제 내용을 입력하세요: ").strip()
+            question = input("\n문제를 입력하세요: ").strip()
             if question:
                 break
             print("❌ 문제 내용은 공백일 수 없습니다.")
@@ -144,18 +142,18 @@ class QuizGame:
         choices = []
         for i in range(1, 5):
             while True:
-                choice = input(f"선택지 {i}번을 입력하세요: ").strip()
+                choice = input(f"선택지 {i}: ").strip()
                 if choice:
                     choices.append(choice)
                     break
                 print("❌ 선택지는 공백일 수 없습니다.")
 
-        answer = self.get_valid_input_int("정답 번호를 입력하세요 (1-4): ", 1, 4)
+        answer = self.get_valid_input_int("정답 번호 (1-4): ", 1, 4)
 
         new_quiz = Quiz(question=question, choices=choices, answer=answer)
         self.quizzes.append(new_quiz)
         self.save_state()
-        print("✅ 새 퀴즈가 성공적으로 추가되었습니다!")
+        print("✅ 퀴즈가 추가되었습니다!")
 
     def show_quiz_list(self):
         if not self.quizzes:
