@@ -99,29 +99,35 @@ class QuizGame:
             print("\n❌ 풀어볼 퀴즈가 없습니다. 먼저 퀴즈를 추가해 주세요.")
             return
 
-        print("\n🚀 퀴즈 풀기를 시작합니다!")
         score = 0
         total = len(self.quizzes)
+
+        print(f"\n 📝 퀴즈를 시작합니다! (총 {total}문제)")
+        print("\n" + "-" * 40)
 
         for idx, quiz in enumerate(self.quizzes, start=1):
             print(f"\n[문제 {idx}/{total}] {quiz.question}")
             for c_idx, choice in enumerate(quiz.choices, start=1):
                 print(f"  {c_idx}. {choice}")
 
-            user_ans = self.get_valid_input_int("정답 번호 선택 (1-4): ", 1, 4)
+            user_ans = self.get_valid_input_int("정답 입력: ", 1, 4)
 
             if quiz.is_correct(user_ans):
-                print("⭕ 정답입니다!")
+                print("✅ 정답입니다!")
                 score += 1
             else:
                 correct_choice = quiz.choices[quiz.answer - 1]
                 print(f"❌ 틀렸습니다. 정답은 {quiz.answer}번({correct_choice})입니다.")
 
+        percentage = int((score / total) * 100) if total > 0 else 0
+
         print("\n" + "=" * 42)
-        print(f"🎉 퀴즈 종료! 최종 점수: {score} / {total}")
+        print(f"🏆 결과: {total}문제 중 {score}문제 정답! ({percentage}점)")
+
+        
 
         if score > self.best_score:
-            print(f"🎊 축하합니다! 최고 점수를 갱신했습니다! ({self.best_score}점 ➔ {score}점)")
+            print("🎉 새로운 최고 점수입니다!")
             self.best_score = score
             self.save_state()
         print("=" * 42)
