@@ -151,6 +151,20 @@ class QuizGame:
         self.save_state()
         print("✅ 새 퀴즈가 성공적으로 추가되었습니다!")
 
+    def show_quiz_list(self):
+        if not self.quizzes:
+            print("\n❌ 등록된 퀴즈가 없습니다.")
+            return
+
+        print(f"\n📋 등록된 퀴즈 목록 (총 {len(self.quizzes)}개)")
+        print("-" * 35)
+        for idx, quiz in enumerate(self.quizzes, start=1):
+            print(f"Q{idx}. {quiz.question}")
+            for c_idx, choice in enumerate(quiz.choices, start=1):
+                mark = " (정답)" if c_idx == quiz.answer else ""
+                print(f"   {c_idx}) {choice}{mark}")
+            print("-" * 35)
+
     def display_menu(self):
         print("\n" + "=" * 35)
         print("          🧠 파이썬 퀴즈 게임          ")
@@ -173,7 +187,7 @@ class QuizGame:
                 elif choice == 2:
                     self.add_quiz()
                 elif choice == 3:
-                    print("\n🚧 [퀴즈 목록 보기] 기능 구현 예정입니다.")
+                    self.show_quiz_list()
                 elif choice == 4:
                     print("\n🚧 [최고 점수 확인] 기능 구현 예정입니다.")
                 elif choice == 5:
