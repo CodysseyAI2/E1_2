@@ -18,26 +18,31 @@ class QuizGame:
                 question="Python에서 가변(Mutable) 객체는 무엇일까요?",
                 choices=["tuple", "int", "list", "str"],
                 answer=3,
+                hint="요소를 수정하거나 추가(append)할 수 있는 대표적인 자료형입니다.",
             ),
             Quiz(
                 question="리스트의 가장 끝에 요소를 추가하는 메서드는?",
                 choices=["add()", "append()", "push()", "insert()"],
                 answer=2,
+                hint="'붙이다', '첨가하다'라는 뜻의 영단어입니다.",
             ),
             Quiz(
                 question="다음 중 Python의 기본 데이터 타입이 아닌 것은?",
                 choices=["dict", "set", "array", "bool"],
                 answer=3,
+                hint="파이썬에서는 C언어 배열 대신 리스트(list)를 기본으로 주로 사용합니다.",
             ),
             Quiz(
                 question="조건문에서 조건이 거짓일 때 실행할 블록을 지정하는 키워드는?",
                 choices=["else", "catch", "finally", "then"],
                 answer=1,
+                hint="if 문의 조건이 만족되지 않을 때 넘어가는 구문입니다.",
             ),
             Quiz(
                 question="키-값(Key-Value) 쌍으로 데이터를 저장하는 자료형은?",
                 choices=["list", "tuple", "dict", "set"],
                 answer=3,
+                hint="사전(Dictionary)의 약자입니다.",
             ),
         ]
 
@@ -126,11 +131,23 @@ class QuizGame:
             for c_idx, choice in enumerate(quiz.choices, start=1):
                 print(f"  {c_idx}. {choice}")
 
-            user_ans = self.get_valid_input_int("정답 입력: ", 1, 4)
+            used_hint = False
+
+            while True:
+                prompt_text = "정답 입력 (1-4, 힌트 보기: 0): " if quiz.hint and not used_hint else "정답 입력 (1-4): "
+                user_ans = self.get_valid_input_int(prompt_text, 0 if (quiz.hint and not used_hint) else 1, 4)
+
+                if user_ans == 0:
+                    print(f"💡 [힌트] {quiz.hint}")
+                    print("⚠️ 힌트를 사용하여 맞힐 경우 0.5점만 인정됩니다.")
+                    used_hint = True
+                    continue
+                break
 
             if quiz.is_correct(user_ans):
+                earned = 0.5 if used_hint else 1.0
                 print("✅ 정답입니다!")
-                score += 1
+                score += earned
             else:
                 correct_choice = quiz.choices[quiz.answer - 1]
                 print(f"❌ 틀렸습니다. 정답은 {quiz.answer}번({correct_choice})입니다.")
@@ -166,8 +183,9 @@ class QuizGame:
                     print("❌ 선택지는 공백일 수 없습니다.")
 
             answer = self.get_valid_input_int("정답 번호 (1-4): ", 1, 4)
+            hint = input("힌트를 입력하세요 (선택사항, 엔터 시 생략): ").strip()
 
-            new_quiz = Quiz(question=question, choices=choices, answer=answer)
+            new_quiz = Quiz(question=question, choices=choices, answer=answer, hint=hint)
             self.quizzes.append(new_quiz)
             self.save_state()
             print("✅ 퀴즈가 추가되었습니다!")
