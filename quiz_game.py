@@ -165,6 +165,17 @@ class QuizGame:
                 print(f"   {c_idx}) {choice}{mark}")
             print("-" * 35)
 
+    def show_best_score(self):
+        """현재 최고 점수 조회"""
+        total = len(self.quizzes)
+        print("\n" + "=" * 35)
+        print(f"🏆 현재 최고 점수: {self.best_score}점 / (총 {total}문제)")
+        if self.best_score == 0:
+            print("💡 아직 기록된 최고 점수가 없습니다. 퀴즈에 도전해 보세요!")
+        elif self.best_score == total and total > 0:
+            print("🥇 만점 기록 보유 중! 대단합니다!")
+        print("=" * 35)
+
     def display_menu(self):
         print("\n" + "=" * 35)
         print("          🧠 파이썬 퀴즈 게임          ")
@@ -189,7 +200,7 @@ class QuizGame:
                 elif choice == 3:
                     self.show_quiz_list()
                 elif choice == 4:
-                    print("\n🚧 [최고 점수 확인] 기능 구현 예정입니다.")
+                    self.show_best_score()
                 elif choice == 5:
                     self.save_state()
                     print("👋 게임을 종료합니다. 이용해 주셔서 감사합니다!")
