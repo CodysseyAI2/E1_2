@@ -92,3 +92,137 @@ python main.py
 - [x] **힌트 기능:** `Quiz` 클래스 내 힌트 속성 추가 및 힌트 사용 시 점수 차감 로직
 - [x] **퀴즈 삭제 기능:** 등록된 퀴즈 삭제 및 `state.json` 반영
 - [x] **점수 히스토리:** 플레이 날짜/시간, 푼 문제 수, 점수 기록 누적 저장
+
+### 메뉴 출력, 퀴즈 실행, 종료 흐름
+```python
+# quiz_game.py > run()
+def run(self):
+    while True:
+        try:
+            self.display_menu()
+            choice = self.get_valid_input_int("선택: ", 1, 7)
+
+            if choice == 1:
+                self.play_quiz()
+            elif choice == 2:
+                self.add_quiz()
+            elif choice == 3:
+                self.show_quiz_list()
+            elif choice == 4:
+                self.show_best_score()
+            elif choice == 5:
+                self.show_history()
+            elif choice == 6:
+                self.delete_quiz()
+            elif choice == 7:
+                self.save_state()
+                print("👋 게임을 종료합니다. 이용해 주셔서 감사합니다!")
+                break
+        except (KeyboardInterrupt, EOFError):
+            self.safe_exit()
+```
+
+### 정답 판정 및 입력 예외/범위 검증 스니펫
+```python
+# 1. 정답 판정 (quiz.py)
+def is_correct(self, user_answer: int) -> bool:
+    """사용자가 입력한 답안 번호와 정답 번호 일치 여부 판정"""
+    return self.answer == user_answer
+
+# 2. 정수 입력 검증 및 범위 제한 (quiz_game.py)
+def get_valid_input_int(prompt: str, min_val: int, max_val: int) -> int:
+    """정수 변환 예외(ValueError) 처리 및 최소/최대 범위 유효성 검증"""
+    while True:
+        try:
+            user_input = input(prompt).strip()
+            val = int(user_input)
+            if min_val <= val <= max_val:
+                return val
+            print(f"⚠️ 잘못된 입력입니다. {min_val}-{max_val} 사이의 숫자를 입력하세요.")
+        except ValueError:
+            print(f"⚠️ 잘못된 입력입니다. {min_val}-{max_val} 사이의 숫자를 입력하세요.")
+```
+
+### 기본 퀴즈 5종 이상 정의 증빙
+```python
+# quiz_game.py > get_default_quizzes()
+def get_default_quizzes(self) -> list[Quiz]:
+    return [
+        Quiz(question="Python에서 가변(Mutable) 객체는 무엇일까요?", choices=["tuple", "int", "list", "str"], answer=3, hint="수정 가능한 리스트입니다."),
+        Quiz(question="리스트의 가장 끝에 요소를 추가하는 메서드는?", choices=["add()", "append()", "push()", "insert()"], answer=2, hint="'붙이다'라는 뜻입니다."),
+        Quiz(question="다음 중 Python의 기본 데이터 타입이 아닌 것은?", choices=["dict", "set", "array", "bool"], answer=3, hint="array 대신 list를 기본으로 씁니다."),
+        Quiz(question="조건문에서 조건이 거짓일 때 실행할 블록을 지정하는 키워드는?", choices=["else", "catch", "finally", "then"], answer=1, hint="if의 반대 조건 블록입니다."),
+        Quiz(question="키-값(Key-Value) 쌍으로 데이터를 저장하는 자료형은?", choices=["list", "tuple", "dict", "set"], answer=3, hint="사전(Dictionary)의 약자입니다.")
+    ] # 정확히 5개 기본 데이터 인스턴스 반환
+```
+
+### 데이터 영속성 및 파일 I/O 라이프사이클
+```Plaintext
+[프로그램 시작] ➔ QuizGame.__init__() ➔ self.load_state() 실행 (state.json 읽기)
+      │
+[퀴즈 추가 / 풀기 / 삭제] ➔ 메모리 데이터 변경 (self.quizzes, self.best_score, self.history)
+      │                                   │
+      ▼                                   ▼
+[즉시 저장 트리거] ───────────────> self.save_state() 호출 (state.json 쓰기)
+      │
+[프로그램 종료(메뉴 7 or Ctrl+C)] ➔ self.save_state() ➔ 최종 파일 쓰기 완료 후 종료
+```
+
+### state.json 스키마 설계 및 선정 이유
+JSON 포맷 선정 이유: 가독성이 뛰어나 디버깅이 쉽고, 파이썬 내장 json 모듈로 경량화된 직렬화/역직렬화 처리가 가능합니다.
+
+> 필드 구조 및 설계 의도:
+
+- quizzes: Quiz 객체의 리스트를 중첩 구조로 보관하여 문제, 4개 선택지, 정답 번호, 힌트를 통합 관리.
+
+- best_score: 역대 최고 정답 개수를 부동소수점(float) 또는 정수로 보관하여 점수 유지.
+
+- history: 실행 일시(datetime), 총 문항수, 점수, 백분율을 리스트로 누적 기록.
+
+### 파일 I/O 예외 처리 및 복구/백업 전략
+- 예외 발생 사례 및 처리 의도:
+
+  - FileNotFoundError: 파일이 처음 실행되어 존재하지 않을 때 get_default_quizzes()로 안전하게 자동 생성.
+
+  - json.JSONDecodeError / ValueError / KeyError: 사용자의 임의 수정 등으로 JSON 문법이 깨지거나 필수 키가 유실된 경우 프로그램을 튕기지 않고 기본 데이터로 초기화 복구.
+
+- 복구 및 백업 절차:
+
+  - 데이터 변경 시점(퀴즈 추가/삭제/풀이 완료)마다 save_state()를 통해 즉시 파일 동기화.
+
+  - 파일 손상 감지 시 콘솔 경고 메시지 출력 후 안전하게 기본 5개 퀴즈 및 0점 상태로 리셋.
+
+### 안전 종료 및 자원 관리
+```python
+# quiz_game.py > safe_exit()
+def safe_exit(self, message: str = "사용자에 의해 프로그램이 중단되었습니다."):
+    """인터럽트 발생 시 메모리의 무결성이 검증된 데이터만 저장 후 안전 종료"""
+    print(f"\n\n⚠️ {message}")
+    self.save_state()  # 미완성 임시 데이터는 배제하고 기존 유효 상태만 디스크에 플러시
+    print("👋 데이터를 안전하게 보존하고 프로그램을 종료합니다.")
+    sys.exit(0)
+```
+
+### 🏛️ 클래스 기반 객체지향 설계의 이점
+- 함수형/절차형 구조 대비 데이터(퀴즈 속성)와 행위(정답 검증, 직렬화)를 Quiz 클래스로 캡슐화하여 상태 오염을 방지합니다.
+- 다형성과 확장성을 확보하여 추후 주관식 퀴즈, 다중 선택 퀴즈 등 다양한 서브 도메인으로의 확장이 용이합니다.
+
+### 대량 데이터(1,000개 이상) 확장 시 한계점 및 대응 방안
+- 한계점: 단일 state.json 파일 전체를 읽고 쓰는 방식은 $O(N)$의 메모리 사용량과 파일 I/O 병목을 유발합니다. 또한 리스트 기반 순차 탐색은 검색 속도 저하를 야기합니다.
+- 개선 방안:경량 RDBMS(SQLite) 또는 NoSQL 인덱싱 도입으로 페이징(LIMIT/OFFSET) 및 인덱스 기반 $O(1)$ 탐색 구현.파일 쓰기 시 비동기 큐(Background Worker)를 적용하여 게임 흐름 지연 방지.
+
+### 요구사항 변경에 따른 영향 범위(Impact Surface)
+
+| 변경 요구사항 | 수정 대상 파일 및 클래스/메서드 |
+| ------------ | ------------- |
+| 변경 요구사항수정 대상 파일 및 클래스/메서드퀴즈 데이터 구조 변경 (보기 개수 변경, 해설 필드 추가) | quiz.py ➔ Quiz.__init__, to_dict, from_dict  |
+| 점수 산정 정책 변경 (난이도별 가중치, 힌트 감점율 조정) | quiz_game.py ➔ QuizGame.play_quiz  |
+| 저장소 교체 (JSON ➔ SQLite/DB 저장) | quiz_game.py ➔ QuizGame.load_state, save_state |
+| 메뉴 및 CLI UI 변경 | quiz_game.py ➔ QuizGame.display_menu, run  |
+
+
+### 커밋 이력 및 브랜치 병합 증빙 
+```bash
+git log --oneline --graph
+```
+![GIT_LOG](/docs/screenshots/git_log.png)
