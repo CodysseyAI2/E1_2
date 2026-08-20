@@ -226,3 +226,7 @@ def safe_exit(self, message: str = "사용자에 의해 프로그램이 중단�
 git log --oneline --graph
 ```
 ![GIT_LOG](/docs/screenshots/git_log.png)
+
+
+### 원격 변경 사항을 가져오는 표준 실습
+git pull origin main
