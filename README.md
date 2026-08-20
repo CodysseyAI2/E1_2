@@ -230,4 +230,4 @@ git log --oneline --graph
 
 ### 원격 변경 사항을 가져오는 표준 실습
 git pull origin main
-![GIT_LOG](/docs/screenshots/git_log.png)
+![GIT_LOG](/docs/screenshots/git_pull.png)
